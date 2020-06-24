@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 
-public class RopeScript : MonoBehaviour {
+public class RopeScript : MonoBehaviour { // can think of this script as the "bullet"
 
 	public Vector2 destiny;
 
@@ -15,6 +15,8 @@ public class RopeScript : MonoBehaviour {
 
 	public GameObject player;
 
+	public GameObject playerwep;
+
 	public GameObject lastNode;
 
     public List<GameObject> Nodes = new List<GameObject>();
@@ -24,6 +26,15 @@ public class RopeScript : MonoBehaviour {
     int vertexCount = 2;
 
 	bool done = false;
+
+	public GameObject sparksEffect;
+
+	public GameObject hitEnemySparksEffect;
+
+	public int damage = 1;
+
+	public float hookPushForce = 1000f;
+	public float hookPullForce = 1500f;
 
 	// Use this for initialization
 	void Start() {
@@ -94,4 +105,56 @@ public class RopeScript : MonoBehaviour {
 
         vertexCount++;
 	}
+
+    private void DestroySelf()
+    {
+		Destroy(gameObject);
+    }
+
+    private void OnTriggerEnter2D(Collider2D hitInfo)
+    {
+		Enemy1 enemy = hitInfo.GetComponent<Enemy1>();
+		if (enemy != null)
+        {
+			enemy.TakeDamage(damage);
+			Instantiate(hitEnemySparksEffect, transform.position, transform.rotation);
+			//Destroy(player.GetComponent<throwhook>().curHook);
+			//player.GetComponent<throwhook>().ropeActive = false;
+			Invoke("resetRope", 0.25f);
+			Vector2 directionOfObj = (Vector2)transform.position - (Vector2)hitInfo.GetComponent<Transform>().position;
+			hitInfo.GetComponent<Rigidbody2D>().AddForce(directionOfObj.normalized * -enemy.knockbackFromWep);
+
+		}
+		Instantiate(sparksEffect, transform.position, transform.rotation);
+
+
+		if (hitInfo.gameObject.tag == "Can Interact" && hitInfo.gameObject.GetComponent<Rigidbody2D>().mass < 10)
+		{
+			//Destroy(player.GetComponent<throwhook>().curHook);
+			//player.GetComponent<throwhook>().ropeActive = false;
+			Invoke("resetRope", 0.05f);
+			GameObject hookedItem = hitInfo.gameObject;
+			Vector2 directionOfObj = (Vector2)transform.position - (Vector2)hookedItem.transform.position;
+
+			if (player.GetComponent<PlayerMovement>().crouch) // crouch to pull object to player
+            {
+				//hookedItem.GetComponent<Transform>().position = Vector2.MoveTowards((Vector2)hookedItem.transform.position, (Vector2)transform.position, 10);
+				hookedItem.GetComponent<Rigidbody2D>().AddForce(directionOfObj.normalized * hookPullForce);
+			} else // else push object away from player
+            {
+				hookedItem.GetComponent<Rigidbody2D>().AddForce(directionOfObj.normalized * -hookPushForce);
+				//hookedItem.GetComponent<Transform>().position = Vector2.MoveTowards((Vector2)hookedItem.transform.position, (Vector2)transform.position, 10);
+			}
+
+
+		}
+
+	}
+
+	void resetRope()
+	{
+		Destroy(player.GetComponent<throwhook>().curHook);
+		player.GetComponent<throwhook>().ropeActive = false;
+	}
 }
+

@@ -95,8 +95,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67ef4ab505811d64880da4fd44a03ac2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  start: {fileID: 0}
+  start: {fileID: 2659643427930755434, guid: 68b135c264d75ec4480363083f83ff2e, type: 3}
   Explode: {fileID: 6829213836761035622, guid: 0a617ca44b7d28f4c92ee2c0ada300bf, type: 3}
+  EnemyDeathEffect: {fileID: 6829213836761035622, guid: 10109c386ef81c949bfc38383b3096fe,
+    type: 3}
+  respawnTime: 1.5
 --- !u!60 &1009532936202153041
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -107,7 +110,7 @@ PolygonCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
